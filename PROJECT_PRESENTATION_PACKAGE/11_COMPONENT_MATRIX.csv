@@ -1,0 +1,30 @@
+component_name,type,file_path,props_complexity,reusability_score,final_system_recommendation,notes
+GlowPreview,canvas,src/components/glow-editor/GlowPreview.tsx,5 props (state/setPower/onStateChange/onLayerSelect/cssOverride),7,igen (átdolgozással),558 sor; viewport/zoom/grid/drag/toolbar pattern értékes; glow-specifikus render lecserélendő
+LeftSidebar,sidebar,src/components/glow-editor/LeftSidebar.tsx,12 props (state/callbacks/presetManager),6,részben,1091 sor; túl nagy; shell + szekció rendszer átvihető; tartalom glow-specifikus
+RightSidebar,inspector,src/components/glow-editor/RightSidebar.tsx,4 props (state/onStateChange/cssOverride/setCssOverride),7,igen (átdolgozással),696 sor; property panel pattern értékes; dinamikus schema kell
+ControlPanel,panel,src/components/glow-editor/ControlPanel.tsx,10 props,2,nem,830 sor; NEM HASZNÁLT; teljes duplikáció a LeftSidebar+RightSidebar-ral; TÖRÖLNI
+CommandPalette,overlay,src/components/glow-editor/CommandPalette.tsx,9 props (isOpen/onClose/state/callbacks),9,igen,246 sor; minimális módosítással bármilyen editorba; action registry kellene
+ABSplitView,comparison,src/components/glow-editor/ABSplitView.tsx,2 props (currentState/onClose),6,részben,152 sor; koncepció átvihető; a preview-t kell lecserélni
+ABSplitToggle,button,src/components/glow-editor/ABSplitView.tsx,2 props (isOpen/onToggle),8,igen,17 sor; egyszerű toggle gomb
+ExportModal,modal,src/components/glow-editor/RightSidebar.tsx,4 props,8,igen,~60 sor; tab váltó + szintaxiskiemelés + copy; jó UI
+LayerManager (LeftSidebar),list,src/components/glow-editor/LeftSidebar.tsx,13 props,6,részben,~180 sor; drag reorder + groups + style copy; hierarchia pattern átvihető
+LayerManager (ControlPanel),list,src/components/glow-editor/ControlPanel.tsx,7 props,3,nem,Régebbi verzió; duplikáció
+TemplateBrowser (LeftSidebar),browser,src/components/glow-editor/LeftSidebar.tsx,1 prop,5,részben,~50 sor; kategória szűrés UI jó; tartalom glow-specifikus
+TemplateBrowser (ControlPanel),browser,src/components/glow-editor/ControlPanel.tsx,1 prop,3,nem,Duplikáció
+NumberInput (RightSidebar),input,src/components/glow-editor/RightSidebar.tsx,5 props,7,igen,Szám input egységgel; 3x implementálva (konszolidálni!)
+NumberInput (ControlPanel),input,src/components/glow-editor/ControlPanel.tsx,6 props,7,nem,Duplikáció
+AnimatedSlider (RightSidebar),slider,src/components/glow-editor/RightSidebar.tsx,Slider props,7,igen,motion-wrappelt shadcn Slider; 3x implementálva
+AnimatedSlider (ControlPanel),slider,src/components/glow-editor/ControlPanel.tsx,Slider props,7,nem,Duplikáció
+ColorSwatchRow,color,src/components/glow-editor/RightSidebar.tsx,2 props,8,igen,7 gyors szín gomb; egyszerű és hasznos
+ColorHarmonyPanel,color,src/components/glow-editor/RightSidebar.tsx,2 props,8,igen,4 harmónia típus; kattintással alkalmazható; értékes
+ColorPalettePanel,color,src/components/glow-editor/ControlPanel.tsx,2 props,7,nem,Régebbi verziója a ColorHarmonyPanel-nek
+SyntaxHighlightedCode,code,src/components/glow-editor/RightSidebar.tsx,2 props,6,részben,Egyszerű regex-alapú; AST-alapú kellene
+GlowMiniPreview,preview,src/components/glow-editor/ABSplitView.tsx,3 props,4,nem,Glow-specifikus mini preview; 0.4x skálázott
+MiniPresetPreview,preview,src/components/glow-editor/LeftSidebar.tsx,1 prop,5,részben,Réteg szín preview; minta átvihető
+ToolBtn,button,src/components/glow-editor/GlowPreview.tsx,5 props,8,igen,Canvas toolbar gomb; motion hover/tap; kompakt
+CanvasRulers,canvas,src/components/glow-editor/GlowPreview.tsx,3 props,6,részben,Pixel vonalzók; alapszintű implementáció
+ErrorBoundary,error,src/components/ErrorBoundary.tsx,1 prop (children),10,igen,Production-kész; glass surface UI; recovery gomb
+NavLink,navigation,src/components/NavLink.tsx,4 props,8,igen,react-router-dom NavLink wrapper; activeClassName támogatás
+useHistory,hook,src/hooks/use-glow-editor.ts,1 param (initialState),9,igen,Generikus undo/redo; 50 lépés; pushState/undo/redo/canUndo/canRedo
+usePresets,hook,src/hooks/use-glow-editor.ts,1 param (initialState),7,részben,CRUD + favorite + JSON export; localStorage → backend migrálás kell
+usePersistedState,hook,src/hooks/use-persisted-state.ts,0 params,8,igen,Debounced localStorage persist; generikus

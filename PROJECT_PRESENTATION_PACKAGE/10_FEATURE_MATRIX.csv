@@ -1,0 +1,41 @@
+feature_name,category,page,component,maturity,reuse_priority,final_system_fit,notes
+3-column editor layout,architecture,/editor,Index.tsx,high,high,high,Flexbox-alapú; resizable panel-ek kellenek
+Canvas viewport switching,canvas,/editor,GlowPreview,high,high,high,3 fix méret (mobile/tablet/desktop); egyéni méret kellene
+Canvas zoom,canvas,/editor,GlowPreview,high,high,high,0.25x-3x; Ctrl+scroll + gombok; smooth transition
+Canvas grid overlay,canvas,/editor,GlowPreview,medium,high,high,Egyszerű vonalháló; snap-to-grid hiányzik
+Canvas ruler,canvas,/editor,GlowPreview,low,medium,medium,Alapszintű pixel vonalzók; toggle-elhető de UX nem végleges
+Canvas background presets,canvas,/editor,GlowPreview,high,medium,medium,8 preset; a koncepció jó de glow-specifikus
+Drag-and-drop layer positioning,canvas,/editor,GlowPreview,high,high,high,motion/react drag; zoom-kompenzált; nincs snap/alignment
+Floating layer toolbar,canvas,/editor,GlowPreview,medium,high,high,Visibility/duplicate/delete; kiválasztott elemen jelenik meg
+Layer list with reorder,sidebar,/editor,LeftSidebar,high,high,high,Drag reorder; visibility; rename; color indicator
+Layer groups,sidebar,/editor,LeftSidebar,medium,medium,high,Csoport opacity/blend öröklődés; collapse; nem nested
+Style copy/paste,sidebar,/editor,LeftSidebar,medium,medium,medium,Layer stílus másolás/beillesztés; egyszerű de hasznos
+Template browser,sidebar,/editor,LeftSidebar,high,medium,medium,16 preset; 4 kategória; mini preview; gyors betöltés
+User preset management,sidebar,/editor,LeftSidebar,high,medium,medium,Save/load/delete/favorite/search/JSON import-export; localStorage
+Color picker + quick swatches,inspector,/editor,RightSidebar,high,high,high,7 quick swatch + natív color picker + hex input
+Color harmony,inspector,/editor,RightSidebar,high,high,high,4 harmónia típus (comp/analogous/triadic/split); kattintással alkalmazható
+Property sliders,inspector,/editor,RightSidebar,high,high,high,Blur/opacity/width/height; AnimatedSlider + NumberInput
+Blend mode selector,inspector,/editor,RightSidebar,high,high,high,6 blend mode; Select komponens
+Gradient editor,inspector,/editor,RightSidebar,high,medium,medium,Linear/radial/conic; angle slider; color stops; live preview
+Per-layer animation,inspector,/editor,RightSidebar,medium,medium,medium,6 típus; duration/delay; preview indicator
+Clipping mask,inspector,/editor,RightSidebar,medium,low,low,Kép feltöltés; fit mode; glow-specifikus
+Smart suggestions,inspector,/editor,RightSidebar,low,medium,high,Boost Glow / Harmonize gombok; a koncepció értékes
+Live CSS code view,inspector,/editor,RightSidebar,high,high,high,Code tab; szintaxiskiemelés; kézi szerkesztés override
+Global controls,inspector,/editor,RightSidebar,high,high,high,Scale/opacity/noise/animation; Global tab
+Export CSS,export,/editor,glow-types.ts,high,high,high,Teljes CSS generálás animációkkal és noise-zal
+Export Tailwind,export,/editor,glow-export.ts,high,high,high,JSX + Tailwind osztályok
+Export React component,export,/editor,glow-export.ts,high,high,high,Teljes React komponens forráskód
+Export SVG,export,/editor,glow-export.ts,medium,medium,medium,SVG generálás; egyszerű ellipszis alapú
+Export PNG,export,/editor,GlowPreview,medium,medium,medium,html-to-image; pixelRatio 2
+Export Modal UI,export,/editor,RightSidebar,high,high,high,Tab váltó + szintaxiskiemelés + copy; szép UI
+Command palette,navigation,/editor,CommandPalette,high,high,high,⌘K; keresés; kategóriák; billentyűzetes navigáció
+A/B split view,comparison,/editor,ABSplitView,medium,medium,medium,Snapshot vs live; mini preview; resnapshot gomb
+Share link,sharing,/editor,glow-share.ts,medium,low,low,URL hash base64; nem tartós; backend kellene
+Undo/redo,history,/editor,use-glow-editor.ts,high,high,high,50 lépés; ⌘Z/⌘⇧Z; generikus hook
+Keyboard shortcuts,navigation,/editor,Index.tsx,medium,high,high,⌘K/⌘Z/⌘⇧Z; az Index.tsx-ben kezelve
+Randomize glow,utility,/editor,glow-utils.ts,medium,low,low,Véletlenszerű glow generálás; glow-specifikus
+Dark theme,visual,global,index.css,high,high,high,Érett; glassmorphic; HSL tokenek
+Glass surface pattern,visual,global,index.css,high,high,high,backdrop-blur + gradient + border; production-kész
+Error boundary,infrastructure,global,ErrorBoundary,high,high,high,Globális hibakezelés; recovery gomb
+Animation timeline,canvas,/editor,GlowPreview,low,low,medium,Alapszintű; animált layerek vizualizációja; kiforratlan
+Landing page,marketing,/,Landing.tsx,high,low,low,Glow-specifikus tartalom; motion animációk átvhetőek
