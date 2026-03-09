@@ -70,7 +70,7 @@
 |------|-------|
 | **Fájl** | `src/components/glow-editor/ControlPanel.tsx` (830 sor) |
 | **Típus** | Egyesített vezérlőpanel (régebbi) |
-| **Hol használva** | **SEHOL** — importálva van, de nem használt az aktuális Index.tsx-ben |
+| **Hol használva** | **SEHOL** — nincs importálva és nincs használva semmilyen fájlban |
 | **Reusability score** | **2/10** — duplikált kód a LeftSidebar + RightSidebar-ral |
 | **Ajánlás** | **Nem** — eldobandó, a LeftSidebar + RightSidebar a frissebb, jobb implementáció |
 
