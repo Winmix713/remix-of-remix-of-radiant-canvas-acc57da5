@@ -1,212 +1,192 @@
-/**
- * Editor Page - Main editor layout with resizable 3-panel structure
- * Composition of Left (Layers/Presets), Center (Canvas), Right (Inspector) panels
- */
-
-import { useEffect, useCallback } from "react";
+import { useEffect, useMemo } from "react";
 import {
   ResizablePanelGroup,
   ResizablePanel,
   ResizableHandle,
 } from "@/components/ui/resizable";
 import { AnimatePresence } from "motion/react";
-import { GlowPreview } from "@/components/glow-editor/GlowPreview";
 import { LeftSidebar } from "@/components/glow-editor/LeftSidebar";
 import { RightSidebar, ExportModal } from "@/components/glow-editor/RightSidebar";
-import { ABSplitView, ABSplitToggle } from "@/components/glow-editor/ABSplitView";
+import { ABSplitView } from "@/components/glow-editor/ABSplitView";
 import { CommandPalette } from "@/components/glow-editor/CommandPalette";
-import { useEditorStore } from "@/store/editor-store";
-import { useHistory, usePresets } from "@/hooks/use-glow-editor";
-import { usePersistedState } from "@/hooks/use-persisted-state";
-import { debounce, INITIAL_STATE } from "@/lib/glow-types";
+import { CanvasShell } from "@/editor/canvas/CanvasShell";
+import { documentToGlowState, glowStateToDocument } from "@/editor/adapters/glow-compat";
+import { useEditorStore, selectSelectedNode } from "@/store/editor-store";
 import { buildShareUrl, getStateFromCurrentUrl } from "@/lib/glow-share";
 import { toast } from "sonner";
-import type { GlowState } from "@/lib/glow-types";
 
-/**
- * Editor component - Main entry point for the editor
- *
- * Architecture:
- * - Zustand store manages normalized EditorDocument state
- * - Legacy GlowState compatibility (temporary, during migration)
- * - 3-panel resizable layout: Left | Center | Right
- * - Keyboard shortcuts, undo/redo, export via hooks
- */
+const setValueAtPath = (target: Record<string, unknown>, path: string, value: unknown) => {
+  const keys = path.split(".");
+  const lastKey = keys.pop();
+  if (!lastKey) return target;
+
+  let current: Record<string, unknown> = target;
+  for (const key of keys) {
+    current[key] = typeof current[key] === "object" && current[key] !== null
+      ? { ...(current[key] as Record<string, unknown>) }
+      : {};
+    current = current[key] as Record<string, unknown>;
+  }
+
+  current[lastKey] = value;
+  return target;
+};
+
 export default function Editor() {
-  // =========================================================================
-  // STORE & STATE MANAGEMENT
-  // =========================================================================
+  const store = useEditorStore();
+  const selectedNode = useEditorStore(selectSelectedNode);
 
-  // Zustand store (new architecture)
-  const editorStore = useEditorStore();
+  const glowState = useMemo(
+    () => documentToGlowState(store.document, store.ui.selectedNodeId, store.ui.cssOverride),
+    [store.document, store.ui.selectedNodeId, store.ui.cssOverride]
+  );
 
-  // Legacy state (temporary, for backward compatibility with existing components)
-  const { state: currentState, setState: setCurrentState } = usePersistedState();
-  const history = useHistory(currentState);
-  const presetManager = usePresets(INITIAL_STATE);
-
-  // =========================================================================
-  // EFFECTS
-  // =========================================================================
-
-  // Load state from URL hash on mount
   useEffect(() => {
     const urlState = getStateFromCurrentUrl();
     if (urlState) {
-      setCurrentState(urlState);
-      toast.success("Loaded shared glow effect!");
+      store.setDocument(glowStateToDocument(urlState, { name: "Shared Canvas Studio Document" }), {
+        label: "Load shared document",
+      });
+      toast.success("Loaded shared Canvas Studio document");
       window.history.replaceState(null, "", window.location.pathname + window.location.search);
     }
-  }, [setCurrentState]);
-
-  // =========================================================================
-  // HANDLERS
-  // =========================================================================
-
-  const debouncedHistoryPush = useCallback(
-    debounce((state: GlowState) => {
-      history.pushState(state);
-    }, 500),
-    [history]
-  );
-
-  const handleStateChange = useCallback(
-    (newState: GlowState) => {
-      setCurrentState(newState);
-      debouncedHistoryPush(newState);
-    },
-    [setCurrentState, debouncedHistoryPush]
-  );
-
-  const handleUndo = useCallback(() => {
-    const prevState = history.undo();
-    if (prevState) {
-      setCurrentState(prevState);
-    }
-  }, [history, setCurrentState]);
-
-  const handleRedo = useCallback(() => {
-    const nextState = history.redo();
-    if (nextState) {
-      setCurrentState(nextState);
-    }
-  }, [history, setCurrentState]);
-
-  // =========================================================================
-  // KEYBOARD SHORTCUTS
-  // =========================================================================
+  }, [store]);
 
   useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
-      // Cmd+Z: Undo
-      if ((e.metaKey || e.ctrlKey) && e.key === "z" && !e.shiftKey) {
-        e.preventDefault();
-        handleUndo();
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "z" && !event.shiftKey) {
+        event.preventDefault();
+        store.undo();
       }
-      // Cmd+Shift+Z: Redo
-      if ((e.metaKey || e.ctrlKey) && e.shiftKey && e.key === "z") {
-        e.preventDefault();
-        handleRedo();
+      if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "z" && event.shiftKey) {
+        event.preventDefault();
+        store.redo();
       }
-      // Cmd+K: Command Palette
-      if ((e.metaKey || e.ctrlKey) && e.key === "k") {
-        e.preventDefault();
-        editorStore.toggleCommandPalette();
+      if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "k") {
+        event.preventDefault();
+        store.setShowCommandPalette(!store.ui.showCommandPalette);
       }
-      // Cmd+E: Export
-      if ((e.metaKey || e.ctrlKey) && e.key === "e") {
-        e.preventDefault();
-        editorStore.toggleExportModal();
+      if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "e") {
+        event.preventDefault();
+        store.setShowExportModal(!store.ui.showExportModal);
       }
     };
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [handleUndo, handleRedo, editorStore]);
+  }, [store]);
 
-  // =========================================================================
-  // RENDER - 3-PANEL LAYOUT
-  // =========================================================================
+  const handleNodePropertyChange = (path: string, value: unknown) => {
+    if (!selectedNode) return;
+    const nextNode = JSON.parse(JSON.stringify(selectedNode));
+    setValueAtPath(nextNode as Record<string, unknown>, path, value);
+    store.updateNode(selectedNode.id, nextNode, { label: `Update ${selectedNode.name}` });
+  };
 
   return (
     <div className="w-full h-screen bg-editor-bg flex flex-col overflow-hidden">
-      {/* Header / Toolbar could go here */}
-
-      {/* Main 3-panel resizable layout */}
       <ResizablePanelGroup direction="horizontal" className="flex-1">
-        {/* LEFT PANEL: Layers & Presets */}
-        <ResizablePanel defaultSize={15} minSize={12} maxSize={35} className="bg-editor-bg border-r border-editor-border">
+        <ResizablePanel defaultSize={18} minSize={14} maxSize={30} className="bg-editor-bg border-r border-editor-border overflow-hidden">
           <LeftSidebar
-            state={currentState}
-            onStateChange={handleStateChange}
-            history={history}
-            presetManager={presetManager}
+            state={glowState}
+            onStateChange={() => {}}
+            onUndo={() => store.undo()}
+            onRedo={() => store.redo()}
+            canUndo={store.canUndo()}
+            canRedo={store.canRedo()}
+            onSavePreset={(name) => store.savePreset(name)}
+            presetManager={{
+              presets: Object.values(store.presets.userPresets),
+              favorites: store.presets.favorites,
+              builtInPresets: [],
+              savePreset: store.savePreset,
+              loadPreset: (preset) => store.loadPreset(preset.id),
+              deletePreset: store.deletePreset,
+              toggleFavorite: store.toggleFavorite,
+            }}
+            onOpenExport={() => store.setShowExportModal(true)}
+            onShare={() => {
+              navigator.clipboard.writeText(buildShareUrl(glowState));
+              toast.success("Share link copied");
+            }}
+            onOpenCommandPalette={() => store.setShowCommandPalette(true)}
           />
         </ResizablePanel>
 
         <ResizableHandle withHandle />
 
-        {/* CENTER PANEL: Canvas */}
-        <ResizablePanel defaultSize={70} minSize={40} className="bg-editor-bg">
-          <AnimatePresence mode="wait">
-            {currentState && (
-              <GlowPreview
-                key={currentState.id || "canvas"}
-                state={currentState}
-                onStateChange={handleStateChange}
-                showABSplit={editorStore.ui.showABSplit}
-              />
-            )}
-          </AnimatePresence>
+        <ResizablePanel defaultSize={64} minSize={40} className="bg-editor-bg overflow-hidden">
+          <CanvasShell
+            document={store.document}
+            selectedNodeId={store.ui.selectedNodeId}
+            viewport={store.viewport}
+            showGrid={store.ui.showGrid}
+            showDimensions={store.ui.showDimensions}
+            onSelectNode={(nodeId) => store.selectNode(nodeId)}
+            onToggleGrid={() => store.setViewportFlags({
+              showGrid: !store.ui.showGrid,
+              showDimensions: store.ui.showDimensions,
+              showRulers: store.ui.showRulers,
+            })}
+            onToggleDimensions={() => store.setViewportFlags({
+              showGrid: store.ui.showGrid,
+              showDimensions: !store.ui.showDimensions,
+              showRulers: store.ui.showRulers,
+            })}
+            onSetFramePreset={store.setFramePreset}
+            onSetZoom={store.setZoom}
+            onUpdateNodePosition={(nodeId, x, y) => store.updateNodeStyle(nodeId, { x, y }, { label: "Move effect layer" })}
+            cssOverride={store.ui.cssOverride}
+          />
         </ResizablePanel>
 
         <ResizableHandle withHandle />
 
-        {/* RIGHT PANEL: Inspector & Export */}
-        <ResizablePanel defaultSize={15} minSize={12} maxSize={35} className="bg-editor-bg border-l border-editor-border overflow-hidden">
-          {currentState && (
-            <RightSidebar
-              state={currentState}
-              onStateChange={handleStateChange}
-              cssOverride={editorStore.ui.cssOverride}
-              onCssOverrideChange={(css) => {
-                // TODO: Sync to store
-              }}
-              showExportModal={editorStore.ui.showExportModal}
-              onExportModalChange={(show) => {
-                if (show) editorStore.toggleExportModal();
-                else editorStore.toggleExportModal();
-              }}
-            />
-          )}
+        <ResizablePanel defaultSize={18} minSize={14} maxSize={30} className="bg-editor-bg border-l border-editor-border overflow-hidden">
+          <RightSidebar
+            glowState={glowState}
+            selectedNode={selectedNode}
+            activeTab={store.ui.activeInspectorTab}
+            onActiveTabChange={store.setActiveInspectorTab}
+            onNodePropertyChange={handleNodePropertyChange}
+            cssOverride={store.ui.cssOverride}
+            onCssOverrideChange={store.setCssOverride}
+            onGlobalScaleChange={(value) => store.updateDocumentSettings({ globalScale: value }, { label: "Update global scale" })}
+            onGlobalOpacityChange={(value) => store.updateDocumentSettings({ globalOpacity: value }, { label: "Update global opacity" })}
+            onNoiseToggle={(value) => store.updateDocumentSettings({ noiseEnabled: value }, { label: "Toggle noise" })}
+            onNoiseIntensityChange={(value) => store.updateDocumentSettings({ noiseIntensity: value }, { label: "Update noise intensity" })}
+          />
         </ResizablePanel>
       </ResizablePanelGroup>
 
-      {/* Modals & Overlays */}
       <AnimatePresence>
-        {editorStore.ui.showExportModal && currentState && (
+        {store.ui.showExportModal && (
           <ExportModal
-            state={currentState}
-            onClose={() => editorStore.toggleExportModal()}
+            state={glowState}
+            isOpen={store.ui.showExportModal}
+            onClose={() => store.setShowExportModal(false)}
+            cssOverride={store.ui.cssOverride}
           />
         )}
-        {editorStore.ui.showABSplit && currentState && (
-          <ABSplitView state={currentState} onClose={() => editorStore.toggleABSplit()} />
+        {store.ui.showABSplit && (
+          <ABSplitView state={glowState} onClose={() => store.setShowABSplit(false)} />
         )}
       </AnimatePresence>
 
-      {/* Command Palette */}
-      {editorStore.ui.showCommandPalette && (
-        <CommandPalette
-          onClose={() => editorStore.toggleCommandPalette()}
-          onUndo={handleUndo}
-          onRedo={handleRedo}
-          canUndo={history.currentIndex > 0}
-          canRedo={history.currentIndex < history.states.length - 1}
-          onExport={() => editorStore.toggleExportModal()}
-          onToggleABSplit={() => editorStore.toggleABSplit()}
-        />
-      )}
+      <CommandPalette
+        isOpen={store.ui.showCommandPalette}
+        onClose={() => store.setShowCommandPalette(false)}
+        state={glowState}
+        onStateChange={() => {}}
+        onUndo={() => store.undo()}
+        onRedo={() => store.redo()}
+        onExport={() => store.setShowExportModal(true)}
+        onShare={() => {
+          navigator.clipboard.writeText(buildShareUrl(glowState));
+          toast.success("Share link copied");
+        }}
+        onRandomize={() => store.loadDemoDocument("demo-neon-glow")}
+      />
     </div>
   );
 }

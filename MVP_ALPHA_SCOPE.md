@@ -1,5 +1,13 @@
 # MVP ALPHA SCOPE
 
+## Alpha completion snapshot
+- A hárompaneles editor shell aktív és `/editor` alatt fut.
+- A dokumentum, history, viewport, UI flag és demo loading Zustandban él.
+- A jobb sidebar effect-layer szinten schema-driven.
+- Az export kódgenerálás már IR rétegen keresztül indul.
+- Három demo dokumentum választható a store-ból.
+- Az undo/redo snapshotolás tranzakciós logikára állt át.
+
 ## Ebben a körben készül el
 
 ### ✅ Architektúra

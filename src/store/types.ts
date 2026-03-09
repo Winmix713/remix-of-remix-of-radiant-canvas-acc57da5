@@ -1,11 +1,7 @@
 /**
  * Editor Platform - Core Store Types
- * Normalized state model for multi-type node support (glow, box, text, button, etc.)
+ * Normalized state model for multi-type node support.
  */
-
-// ============================================================================
-// NODE TYPES & ENUMS
-// ============================================================================
 
 export type NodeType = "effect-layer" | "group" | "box" | "text" | "button" | "card" | "container" | "image";
 
@@ -14,14 +10,11 @@ export type GradientType = "none" | "linear" | "radial" | "conic";
 export type LayerAnimationType = "none" | "pulse" | "breathe" | "orbit" | "drift" | "flicker" | "colorShift";
 export type ClipMaskFit = "cover" | "contain" | "fill" | "none";
 export type CanvasBackground = "dark" | "light" | "gradient-sunset" | "gradient-ocean" | "gradient-aurora" | "mesh-dark" | "mesh-light" | "dots" | "transparent";
-
-// ============================================================================
-// STYLE & LAYOUT
-// ============================================================================
+export type FramePreset = "mobile" | "tablet" | "desktop";
 
 export interface GradientStop {
   color: string;
-  position: number; // 0-100
+  position: number;
 }
 
 export interface ClipMask {
@@ -31,19 +24,16 @@ export interface ClipMask {
 
 export interface LayerAnimation {
   type: LayerAnimationType;
-  duration: number;  // seconds
-  delay: number;     // seconds
+  duration: number;
+  delay: number;
   enabled: boolean;
 }
 
 export interface NodeStyle {
-  // Position & Size
   x?: number;
   y?: number;
   width?: number;
   height?: number;
-
-  // Appearance
   backgroundColor?: string;
   color?: string;
   opacity?: number;
@@ -52,15 +42,11 @@ export interface NodeStyle {
   borderWidth?: number;
   borderColor?: string;
   boxShadow?: string;
-
-  // Blending & Gradient
   blendMode?: BlendMode;
   gradient?: GradientType;
   gradientAngle?: number;
   gradientStops?: GradientStop[];
   clipMask?: ClipMask;
-
-  // Typography (for text nodes)
   fontSize?: number;
   fontWeight?: number | string;
   fontFamily?: string;
@@ -79,69 +65,48 @@ export interface LayoutProps {
   margin?: number | [number, number, number, number];
 }
 
-// ============================================================================
-// EDITOR NODE (Generalized - can be any type)
-// ============================================================================
-
 export interface EditorNode {
   id: string;
   type: NodeType;
   name: string;
-  
-  // Hierarchy
   parentId: string | null;
   childIds: string[];
-  
-  // Styling & Layout
   style: NodeStyle;
   layout?: LayoutProps;
-  
-  // Properties (type-specific)
-  props: Record<string, any>;
-  
-  // Effects & Animation
+  props: Record<string, unknown>;
   animation?: LayerAnimation;
-  
-  // State
   visible: boolean;
   locked: boolean;
-  
-  // Metadata
   metadata?: {
     createdAt?: number;
     updatedAt?: number;
     tags?: string[];
-    customData?: Record<string, any>;
+    customData?: Record<string, unknown>;
   };
 }
-
-// ============================================================================
-// EDITOR DOCUMENT (Normalized state)
-// ============================================================================
 
 export interface EditorDocument {
   id: string;
   name: string;
-  
-  // Normalized nodes by ID (O(1) lookup)
   nodes: Record<string, EditorNode>;
-  
-  // Root node IDs (top-level canvas elements)
   rootNodeIds: string[];
-  
-  // Document settings
   settings: {
     canvasBackground: CanvasBackground;
     gridVisible: boolean;
     dimensionsVisible: boolean;
     rulersVisible: boolean;
-    globalScale?: number;
-    globalOpacity?: number;
-    noiseEnabled?: boolean;
-    noiseIntensity?: number;
+    globalScale: number;
+    globalOpacity: number;
+    noiseEnabled: boolean;
+    noiseIntensity: number;
+    power: boolean;
+    themeMode: "dark" | "light";
+    animation: {
+      enabled: boolean;
+      type: "pulse" | "breathe" | "none";
+      duration: number;
+    };
   };
-  
-  // Metadata
   metadata: {
     createdAt: number;
     updatedAt: number;
@@ -149,56 +114,40 @@ export interface EditorDocument {
   };
 }
 
-// ============================================================================
-// VIEWPORT & UI STATE
-// ============================================================================
-
 export interface ViewportState {
   zoom: number;
   offsetX: number;
   offsetY: number;
   frameWidth: number;
   frameHeight: number;
+  framePreset: FramePreset;
 }
 
 export interface UIState {
   selectedNodeId: string | null;
-  selectedNodeIds: string[];  // Multi-select
+  selectedNodeIds: string[];
   hoveredNodeId: string | null;
-  
-  // Panels
   activeInspectorTab: "style" | "global" | "code";
   showExportModal: boolean;
   showCommandPalette: boolean;
   showABSplit: boolean;
-  
-  // Inspector
-  cssOverride?: string;
+  cssOverride: string | null;
   inspectorScrollTop?: number;
-  
-  // Viewport
   showGrid: boolean;
   showDimensions: boolean;
   showRulers: boolean;
 }
 
-// ============================================================================
-// HISTORY (Undo/Redo)
-// ============================================================================
-
 export interface HistorySnapshot {
   document: EditorDocument;
   timestamp: number;
+  label?: string;
 }
 
 export interface HistoryState {
   past: HistorySnapshot[];
   future: HistorySnapshot[];
 }
-
-// ============================================================================
-// PRESETS & TEMPLATES
-// ============================================================================
 
 export interface SavedPreset {
   id: string;
@@ -217,59 +166,52 @@ export interface PresetState {
   favorites: string[];
 }
 
-// ============================================================================
-// COMPLETE EDITOR STORE STATE
-// ============================================================================
-
-export interface EditorStoreState {
-  // Core document
+export interface DemoDocument {
+  id: string;
+  name: string;
+  description: string;
+  category: string;
   document: EditorDocument;
-  
-  // UI & Viewport
-  ui: UIState;
-  viewport: ViewportState;
-  
-  // History
-  history: HistoryState;
-  
-  // Presets
-  presets: PresetState;
 }
 
-// ============================================================================
-// ACTIONS & SELECTORS (Type inference helpers)
-// ============================================================================
+export interface EditorStoreState {
+  document: EditorDocument;
+  ui: UIState;
+  viewport: ViewportState;
+  history: HistoryState;
+  presets: PresetState;
+  demoDocuments: DemoDocument[];
+  activeDemoDocumentId: string | null;
+}
 
 export interface EditorStoreActions {
-  // Document management
+  setDocument: (document: EditorDocument, options?: { recordHistory?: boolean; label?: string }) => void;
+  updateDocumentSettings: (updates: Partial<EditorDocument["settings"]>, options?: { recordHistory?: boolean; label?: string }) => void;
   createNode: (type: NodeType, parentId: string | null, defaults?: Partial<EditorNode>) => string;
   deleteNode: (nodeId: string) => void;
-  updateNode: (nodeId: string, updates: Partial<EditorNode>) => void;
+  updateNode: (nodeId: string, updates: Partial<EditorNode>, options?: { recordHistory?: boolean; label?: string }) => void;
+  updateNodeStyle: (nodeId: string, updates: Partial<NodeStyle>, options?: { recordHistory?: boolean; label?: string }) => void;
   moveNode: (nodeId: string, newParentId: string | null, index?: number) => void;
-  
-  // Selection
-  selectNode: (nodeId: string, multi?: boolean) => void;
+  selectNode: (nodeId: string | null, multi?: boolean) => void;
   deselectNode: (nodeId: string) => void;
   clearSelection: () => void;
-  
-  // UI
   setActiveInspectorTab: (tab: "style" | "global" | "code") => void;
-  toggleExportModal: () => void;
-  toggleCommandPalette: () => void;
-  toggleABSplit: () => void;
-  
-  // Viewport
+  setShowExportModal: (show: boolean) => void;
+  setShowCommandPalette: (show: boolean) => void;
+  setShowABSplit: (show: boolean) => void;
+  setCssOverride: (css: string | null) => void;
+  setViewportFlags: (updates: Pick<UIState, "showGrid" | "showDimensions" | "showRulers">) => void;
   setZoom: (zoom: number) => void;
   panViewport: (dx: number, dy: number) => void;
-  
-  // Presets
+  setFramePreset: (preset: FramePreset) => void;
   savePreset: (name: string, description?: string) => void;
   loadPreset: (presetId: string) => void;
   deletePreset: (presetId: string) => void;
   toggleFavorite: (presetId: string) => void;
-  
-  // History
+  loadDemoDocument: (demoId: string) => void;
   undo: () => void;
   redo: () => void;
-  pushHistory: () => void;
+  pushHistory: (label?: string) => void;
+  canUndo: () => boolean;
+  canRedo: () => boolean;
 }

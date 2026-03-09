@@ -1,5 +1,14 @@
 # UPGRADE PLAN — Glow Editor → Canvas Studio Alpha
 
+## Alpha status update
+- `/editor` now routes to `src/pages/Editor.tsx`; `Index.tsx` is explicitly deprecated but retained for parity validation.
+- Zustand is the active source of truth for document, viewport, UI flags, history, presets, and demo document loading.
+- A `glow-compat` adapter bridges normalized `EditorDocument` data to legacy preview/export flows.
+- Undo/redo now records snapshots before document mutation to avoid history drift.
+- The right inspector is now schema-driven for `effect-layer` nodes and uses shared inputs.
+- Export generation now flows through an intermediate representation before formatter output.
+- Three demo documents are seeded in-store: Neon Glow, Landing Hero, and Card Component.
+
 ## Jelenlegi problémák
 1. **useState + props drilling** — nem skálázódik, stale closure kockázat
 2. **Glow-specifikus renderelés** — nem általánosítható

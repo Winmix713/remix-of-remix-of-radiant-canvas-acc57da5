@@ -13,6 +13,9 @@ import { buildShareUrl, getStateFromCurrentUrl } from "@/lib/glow-share";
 import { toast } from "sonner";
 import type { GlowState } from "@/lib/glow-types";
 
+/**
+ * @deprecated Legacy glow-editor entrypoint. Kept temporarily for parity checks while /editor now routes to Editor.tsx.
+ */
 export default function Index() {
   const { state: currentState, setState: setCurrentState } = usePersistedState();
   const [cssOverride, setCssOverride] = useState<string | null>(null);

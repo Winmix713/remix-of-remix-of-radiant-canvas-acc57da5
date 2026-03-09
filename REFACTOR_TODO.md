@@ -1,5 +1,14 @@
 # REFACTOR TODO — Fájlszintű teendők
 
+## Alpha progress snapshot
+- [x] `/editor` átirányítva az új `Editor.tsx` shellre
+- [x] `Index.tsx` deprecated jelölés, megőrizve átmeneti parity célra
+- [x] `glow-compat` adapter létrehozva (`glowStateToDocument`, `documentToGlowState`)
+- [x] Történetkezelés javítva pre-mutation snapshot logikára
+- [x] Jobb sidebar shared inputokra és schema-driven property panelre állítva
+- [x] IR export pipeline váz kiépítve
+- [x] 3 demo dokumentum seedelve a store-ba
+
 ## TÖRÖLNI
 - [x] `src/components/glow-editor/ControlPanel.tsx` — 830 sor duplikált, nem használt kód
 

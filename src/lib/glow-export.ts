@@ -1,146 +1,124 @@
 import type { GlowState } from "./glow-types";
-import { exportAsCSS, getLayerBackground } from "./glow-types";
+import { exportAsCSS } from "./glow-types";
+import { glowStateToDocument } from "@/editor/adapters/glow-compat";
+import { documentToIntermediateRepresentation } from "@/editor/export/intermediate-repr";
 
 export type ExportFormat = "css" | "tailwind" | "react" | "svg";
 
+const gradientToCss = (layer: ReturnType<typeof documentToIntermediateRepresentation>["layers"][number]) => {
+  if (layer.gradient !== "none" && layer.gradientStops && layer.gradientStops.length >= 2) {
+    const stops = layer.gradientStops.map((stop) => `${stop.color} ${stop.position}%`).join(", ");
+    const angle = layer.gradientAngle ?? 90;
+    if (layer.gradient === "linear") return `linear-gradient(${angle}deg, ${stops})`;
+    if (layer.gradient === "radial") return `radial-gradient(circle, ${stops})`;
+    if (layer.gradient === "conic") return `conic-gradient(from ${angle}deg, ${stops})`;
+  }
+  return layer.color;
+};
+
 export function exportAsTailwind(state: GlowState): string {
-  const layers = state.layers
-    .filter((l) => l.active)
+  const ir = documentToIntermediateRepresentation(glowStateToDocument(state, { name: "Tailwind Export" }));
+  const layers = ir.layers
+    .filter((layer) => layer.visible)
     .map(
-      (layer, i) => {
-        const bg = getLayerBackground(layer);
-        const isGradient = layer.gradient && layer.gradient !== "none";
-        return `{/* ${layer.name} */}
+      (layer, index) => `{/* ${layer.name} */}
 <div
   className="absolute top-1/2 left-1/2 rounded-full"
   style={{
     transform: 'translate(-50%, -50%) translate(${layer.x}px, ${layer.y}px)',
     width: '${layer.width}px',
     height: '${layer.height}px',
-    ${isGradient ? `background: '${bg}'` : `backgroundColor: '${bg}'`},
+    background: '${gradientToCss(layer)}',
     filter: 'blur(${layer.blur}px)',
     opacity: ${layer.opacity},
     mixBlendMode: '${layer.blendMode}',
-    zIndex: ${i},
+    zIndex: ${index},
   }}
-/>`;
-      }
+/>`
     )
     .join("\n");
 
-  const perLayerAnimations = state.layers
-    .filter(l => l.active && l.layerAnimation?.enabled && l.layerAnimation.type !== "none")
-    .map((l, i) => {
-      const a = l.layerAnimation!;
-      return `\n{/* Layer "${l.name}" animation: ${a.type}, ${a.duration}s, delay ${a.delay}s */}`;
-    }).join("");
-
-  const animation = state.animation.enabled
-    ? `\n{/* Add to tailwind.config.ts:
-  keyframes: {
-    breathe: {
-      '0%, 100%': { opacity: '${state.globalOpacity}', transform: 'scale(${state.globalScale})' },
-      '50%': { opacity: '${state.globalOpacity * 0.8}', transform: 'scale(${state.globalScale * 1.05})' },
-    }
-  },
-  animation: {
-    breathe: 'breathe ${state.animation.duration}s ease-in-out infinite',
-  }
-*/}`
-    : "";
-
-  return `{/* Glow Effect - Tailwind + Inline Styles */}
+  return `{/* Canvas Studio export */}
 <div className="relative w-full h-full overflow-hidden">
   <div
-    className="absolute inset-0${state.animation.enabled ? " animate-breathe" : ""}"
+    className="absolute inset-0"
     style={{
-      transform: 'scale(${state.globalScale})',
-      opacity: ${state.globalOpacity},
+      transform: 'scale(${ir.settings.globalScale})',
+      opacity: ${ir.settings.globalOpacity},
     }}
   >
 ${layers}
   </div>
-</div>${animation}${perLayerAnimations}`;
+</div>`;
 }
 
 export function exportAsReactComponent(state: GlowState): string {
-  const layerConfigs = state.layers
-    .filter((l) => l.active)
+  const ir = documentToIntermediateRepresentation(glowStateToDocument(state, { name: "React Export" }));
+  const layerConfigs = ir.layers
+    .filter((layer) => layer.visible)
     .map(
-      (l) => {
-        const gradientParts = l.gradient && l.gradient !== "none"
-          ? `, gradient: "${l.gradient}", gradientAngle: ${l.gradientAngle ?? 90}, gradientStops: ${JSON.stringify(l.gradientStops || [])}`
-          : "";
-        const animParts = l.layerAnimation?.enabled && l.layerAnimation.type !== "none"
-          ? `, animation: { type: "${l.layerAnimation.type}", duration: ${l.layerAnimation.duration}, delay: ${l.layerAnimation.delay} }`
-          : "";
-        return `    { name: "${l.name}", color: "${l.color}", blur: ${l.blur}, opacity: ${l.opacity}, width: ${l.width}, height: ${l.height}, x: ${l.x}, y: ${l.y}, blendMode: "${l.blendMode}" as const${gradientParts}${animParts} },`;
-      }
+      (layer) => `  {
+    name: ${JSON.stringify(layer.name)},
+    x: ${layer.x},
+    y: ${layer.y},
+    width: ${layer.width},
+    height: ${layer.height},
+    blur: ${layer.blur},
+    opacity: ${layer.opacity},
+    blendMode: ${JSON.stringify(layer.blendMode)},
+    background: ${JSON.stringify(gradientToCss(layer))},
+  },`
     )
     .join("\n");
 
-  return `import React from "react";
-
-interface GlowEffectProps {
-  className?: string;
-  scale?: number;
-  opacity?: number;
-}
-
-const layers = [
-${layerConfigs}
-];
-
-export function GlowEffect({ className = "", scale = ${state.globalScale}, opacity = ${state.globalOpacity} }: GlowEffectProps) {
-  return (
-    <div className={\`relative w-full h-full overflow-hidden \${className}\`}>
-      <div
-        className="absolute inset-0"
-        style={{
-          transform: \`scale(\${scale})\`,
-          opacity,${state.animation.enabled ? `\n          animation: "breathe ${state.animation.duration}s ease-in-out infinite",` : ""}
-        }}
-      >
-        {layers.map((layer, i) => (
-          <div
-            key={i}
-            className="absolute top-1/2 left-1/2 rounded-full"
-            style={{
-              transform: \`translate(-50%, -50%) translate(\${layer.x}px, \${layer.y}px)\`,
-              width: layer.width,
-              height: layer.height,
-              backgroundColor: layer.color,
-              filter: \`blur(\${layer.blur}px)\`,
-              opacity: layer.opacity,
-              mixBlendMode: layer.blendMode,
-              zIndex: i,
-            }}
-          />
-        ))}
-      </div>
-    </div>
-  );
-}`;
+  return [
+    'import React from "react";',
+    '',
+    'const layers = [',
+    layerConfigs,
+    '];',
+    '',
+    'export function CanvasStudioEffect() {',
+    '  return (',
+    '    <div className="relative w-full h-full overflow-hidden">',
+    '      <div',
+    '        className="absolute inset-0"',
+    `        style={{ transform: "scale(${ir.settings.globalScale})", opacity: ${ir.settings.globalOpacity} }}`,
+    '      >',
+    '        {layers.map((layer, index) => (',
+    '          <div',
+    '            key={index}',
+    '            className="absolute top-1/2 left-1/2 rounded-full"',
+    '            style={{',
+    '              transform: "translate(-50%, -50%) translate(" + layer.x + "px, " + layer.y + "px)",',
+    '              width: layer.width,',
+    '              height: layer.height,',
+    '              background: layer.background,',
+    '              filter: "blur(" + layer.blur + "px)",',
+    '              opacity: layer.opacity,',
+    '              mixBlendMode: layer.blendMode,',
+    '            }}',
+    '          />',
+    '        ))}',
+    '      </div>',
+    '    </div>',
+    '  );',
+    '}',
+  ].join("\n");
 }
 
 export function exportAsSVG(state: GlowState, width = 800, height = 600): string {
-  const activeLayers = state.layers.filter((l) => l.active);
-  const filters = activeLayers.map((l, i) =>
-    `  <filter id="blur-${i}"><feGaussianBlur stdDeviation="${l.blur / 2}" /></filter>`
-  ).join("\n");
-
-  const circles = activeLayers.map((l, i) => {
-    const cx = width / 2 + l.x;
-    const cy = height / 2 + l.y;
-    return `  <ellipse cx="${cx}" cy="${cy}" rx="${l.width / 2}" ry="${l.height / 2}" fill="${l.color}" opacity="${l.opacity}" filter="url(#blur-${i})" style="mix-blend-mode:${l.blendMode}" />`;
-  }).join("\n");
+  const ir = documentToIntermediateRepresentation(glowStateToDocument(state, { name: "SVG Export" }));
+  const layers = ir.layers.filter((layer) => layer.visible);
+  const filters = layers.map((layer, index) => `  <filter id="blur-${index}"><feGaussianBlur stdDeviation="${layer.blur / 2}" /></filter>`).join("\n");
+  const circles = layers.map((layer, index) => `  <ellipse cx="${width / 2 + layer.x}" cy="${height / 2 + layer.y}" rx="${layer.width / 2}" ry="${layer.height / 2}" fill="${layer.color}" opacity="${layer.opacity}" filter="url(#blur-${index})" style="mix-blend-mode:${layer.blendMode}" />`).join("\n");
 
   return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${width} ${height}" width="${width}" height="${height}">
   <defs>
 ${filters}
   </defs>
-  <rect width="${width}" height="${height}" fill="${state.themeMode === 'dark' ? '#0d0d0d' : '#f5f5f5'}" />
-  <g transform="scale(${state.globalScale})" opacity="${state.globalOpacity}">
+  <rect width="${width}" height="${height}" fill="${ir.settings.themeMode === "dark" ? "#0d0d0d" : "#f5f5f5"}" />
+  <g transform="scale(${ir.settings.globalScale})" opacity="${ir.settings.globalOpacity}">
 ${circles}
   </g>
 </svg>`;
@@ -156,5 +134,7 @@ export function exportForFormat(state: GlowState, format: ExportFormat): string 
       return exportAsReactComponent(state);
     case "svg":
       return exportAsSVG(state);
+    default:
+      return exportAsCSS(state);
   }
 }
