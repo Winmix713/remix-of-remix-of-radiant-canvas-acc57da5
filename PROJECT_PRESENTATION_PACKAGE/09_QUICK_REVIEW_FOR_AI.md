@@ -12,7 +12,7 @@ Böngészőalapú vizuális CSS glow effektus szerkesztő (React + Vite + TypeSc
 
 ## Legfontosabb komponensek
 1. **GlowPreview** (558 sor) — Canvas: viewport switching (mobile/tablet/desktop), zoom (0.25x–3x), grid/ruler/crosshair, 8 háttér preset, drag-and-drop réteg pozícionálás, PNG/SVG export, floating layer toolbar, animation timeline
-2. **LeftSidebar** (1091 sor) — Réteglista (drag reorder, csoportok, stílus másolás), template böngésző (16 preset, 4 kategória), preset mentés/keresés/kedvencezés/JSON export, globális vezérlők, toolbar (undo/redo/save/share/export/randomize/⌘K)
+2. **LeftSidebar** (1091 sor) — Réteglista (drag reorder, csoportok, stílus másolás), template böngésző (17 preset, 4 kategória), preset mentés/keresés/kedvencezés/JSON export, globális vezérlők, toolbar (undo/redo/save/share/export/randomize/⌘K)
 3. **RightSidebar** (696 sor) — Property panel: Style tab (szín picker, harmony, quick swatch, sliders, blend mode, gradient editor, per-layer animation, clipping mask), Global tab (scale/opacity/noise/animation), Code tab (élő CSS + kézi szerkesztés)
 4. **CommandPalette** (246 sor) — ⌘K gyors-parancs kereső: actions, layers, presets; billentyűzetes navigáció; csoportosított eredmények
 5. **ExportModal** — CSS/Tailwind/React formátum váltó, szintaxiskiemelés, copy
@@ -21,7 +21,7 @@ Böngészőalapú vizuális CSS glow effektus szerkesztő (React + Vite + TypeSc
 
 ## Legfontosabb flow-k
 1. Layer kiválasztás → property szerkesztés → élő előnézet
-2. Template betöltés (16 beépített, kategória szűrés)
+2. Template betöltés (17 beépített, kategória szűrés)
 3. Preset mentés/betöltés/keresés/kedvencezés (localStorage)
 4. Export: CSS / Tailwind / React / SVG
 5. Canvas: viewport váltás, zoom, grid, bg picker, drag pozícionálás

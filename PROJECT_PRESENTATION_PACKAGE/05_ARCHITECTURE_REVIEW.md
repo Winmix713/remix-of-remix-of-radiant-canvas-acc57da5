@@ -56,7 +56,7 @@ src/
 │   ├── glow-types.ts          # Típusok + INITIAL_STATE + exportAsCSS + debounce
 │   ├── glow-utils.ts          # Szín utils + layer utils
 │   ├── glow-export.ts         # Tailwind/React/SVG export
-│   ├── glow-presets.ts        # 16 beépített preset
+│   ├── glow-presets.ts        # 17 beépített preset
 │   ├── glow-share.ts          # URL-alapú megosztás
 │   └── utils.ts               # cn() helper
 ├── pages/

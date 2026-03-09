@@ -41,7 +41,7 @@
 | **Lépések** | 1. Kategória kiválasztás (All/Neon/Nature/Vibrant/Minimal) → 2. Egy template kártya kattintása → 3. Az editor állapot lecserélődik a template állapotára → 4. Toast értesítés |
 | **Döntési pontok** | Kategória szűrés |
 | **Kimenet** | A teljes editor állapot frissül az új template-re |
-| **Mi működik jól** | 16 beépített preset 4 kategóriában, mini-preview a kártyákon, gyors betöltés, toast visszajelzés |
+| **Mi működik jól** | 17 beépített preset 4 kategóriában (5 Neon + 6 Nature + 3 Vibrant + 3 Minimal) (5 Neon + 6 Nature + 3 Vibrant + 3 Minimal), mini-preview a kártyákon, gyors betöltés, toast visszajelzés |
 | **Mi gyenge** | A betöltés felülírja az aktuális állapotot megerősítés nélkül; nincs "merge" opció |
 | **Átvinni?** | **Igen** — a template böngésző UI + kategória rendszer értékes a végső rendszerhez |
 
@@ -52,7 +52,7 @@
 | Mező | Érték |
 |------|-------|
 | **Flow neve** | Egyéni preset mentése és visszatöltése |
-| **Kiindulási pont** | Bal oldalsáv "Save" gomb vagy ⌘S |
+| **Kiiont** | Bal oldalsáv "Save" gomb vagy ⌘S |
 | **Lépések** | 1. "Save" gombra kattintás → 2. Preset név megadása → 3. Enter vagy Save gomb → 4. A preset megjelenik a "My Presets" listában → 5. Kedvencezés (csillag ikon) → 6. Visszatöltés (kattintás) → 7. Törlés (kuka ikon) → 8. Import/Export JSON fájlként |
 | **Döntési pontok** | Preset név; kedvenc jelölés |
 | **Kimenet** | Preset mentve localStorage-ban |

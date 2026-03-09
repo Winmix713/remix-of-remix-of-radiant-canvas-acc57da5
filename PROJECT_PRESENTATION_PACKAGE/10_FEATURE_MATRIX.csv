@@ -10,7 +10,7 @@ Floating layer toolbar,canvas,/editor,GlowPreview,medium,high,high,Visibility/du
 Layer list with reorder,sidebar,/editor,LeftSidebar,high,high,high,Drag reorder; visibility; rename; color indicator
 Layer groups,sidebar,/editor,LeftSidebar,medium,medium,high,Csoport opacity/blend öröklődés; collapse; nem nested
 Style copy/paste,sidebar,/editor,LeftSidebar,medium,medium,medium,Layer stílus másolás/beillesztés; egyszerű de hasznos
-Template browser,sidebar,/editor,LeftSidebar,high,medium,medium,16 preset; 4 kategória; mini preview; gyors betöltés
+Template browser,sidebar,/editor,LeftSidebar,high,medium,medium,17 preset; 4 kategória (5 Neon + 6 Nature + 3 Vibrant + 3 Minimal); mini preview; gyors betöltés
 User preset management,sidebar,/editor,LeftSidebar,high,medium,medium,Save/load/delete/favorite/search/JSON import-export; localStorage
 Color picker + quick swatches,inspector,/editor,RightSidebar,high,high,high,7 quick swatch + natív color picker + hex input
 Color harmony,inspector,/editor,RightSidebar,high,high,high,4 harmónia típus (comp/analogous/triadic/split); kattintással alkalmazható
