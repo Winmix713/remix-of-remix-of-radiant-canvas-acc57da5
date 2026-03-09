@@ -70,7 +70,7 @@
 |------|-------|
 | **Fájl** | `src/components/glow-editor/ControlPanel.tsx` (830 sor) |
 | **Típus** | Egyesített vezérlőpanel (régebbi) |
-| **Hol használva** | **SEHOL** — nincs importálva és nincs használva semmilyen fájlban |
+| **Hol használva** | **SEHOL** — nincs importálva és nincs használva semmilyen fájlba
 | **Reusability score** | **2/10** — duplikált kód a LeftSidebar + RightSidebar-ral |
 | **Ajánlás** | **Nem** — eldobandó, a LeftSidebar + RightSidebar a frissebb, jobb implementáció |
 
@@ -171,8 +171,7 @@
 - **Ajánlás:** A multi-format export pattern nagyon értékes
 
 ### glow-presets.ts
-- 16 beépített preset 4 kategóriában
-- **Ajánlás:** Glow-specifikus, de a preset struktúra mint minta átvihető
+- 16 b7 beépített preset 4 kategóriában (5 Neon + 6 Nature + 3 Vibrant + 3 Minimal)**Ajánlás:** Glow-specifikus, de a preset struktúra mint minta átvihető
 
 ### glow-share.ts
 - URL hash alapú állapot megosztás (base64)

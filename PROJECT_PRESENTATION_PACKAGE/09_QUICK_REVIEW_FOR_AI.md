@@ -21,7 +21,7 @@ Böngészőalapú vizuális CSS glow effektus szerkesztő (React + Vite + TypeSc
 
 ## Legfontosabb flow-k
 1. Layer kiválasztás → property szerkesztés → élő előnézet
-2. Template betöltés (16 beépített, kategória szűrés)
+2. Template betöltés (17 beépített, kategória szűrés)
 3. Preset mentés/betöltés/keresés/kedvencezés (localStorage)
 4. Export: CSS / Tailwind / React / SVG
 5. Canvas: viewport váltás, zoom, grid, bg picker, drag pozícionálás

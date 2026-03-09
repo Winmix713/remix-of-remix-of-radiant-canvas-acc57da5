@@ -77,7 +77,7 @@
 2. **Save preset** — Save gomb → név megadás → elmentve
 3. **My Presets** — collapsible lista, kedvencezés, keresés, JSON export/import
 
-> „16 beépített template 4 kategóriában, plusz felhasználói preset-ek mentése, kedvencezése, keresése és JSON exportja. A minta a végső rendszer template rendszeréhez használható."
+> „17 beépített template 4 kategóriában (5 Neon + 6 Nature + 3 Vibrant + 3 Minimal), plusz felhasználói preset-ek mentése, kedvencezése, keresése és JSON exportja. A minta a végső rendszer template rendszeréhez használható."
 
 ---
 
