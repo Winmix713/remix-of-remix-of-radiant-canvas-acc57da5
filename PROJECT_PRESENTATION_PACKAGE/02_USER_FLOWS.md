@@ -41,7 +41,7 @@
 | **Lépések** | 1. Kategória kiválasztás (All/Neon/Nature/Vibrant/Minimal) → 2. Egy template kártya kattintása → 3. Az editor állapot lecserélődik a template állapotára → 4. Toast értesítés |
 | **Döntési pontok** | Kategória szűrés |
 | **Kimenet** | A teljes editor állapot frissül az új template-re |
-| **Mi működik jól** | 16 beépített preset 4 kategóriában, mini-preview a kártyákon, gyors betöltés, toast visszajelzés |
+| **Mi működik jól** | 17 beépített preset 4 kategóriában (5 Neon + 6 Nature + 3 Vibrant + 3 Minimal), mini-preview a kártyákon, gyors betöltés, toast visszajelzés |
 | **Mi gyenge** | A betöltés felülírja az aktuális állapotot megerősítés nélkül; nincs "merge" opció |
 | **Átvinni?** | **Igen** — a template böngésző UI + kategória rendszer értékes a végső rendszerhez |
 
