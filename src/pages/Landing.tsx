@@ -36,7 +36,7 @@ export default function Landing() {
             <div className="w-7 h-7 rounded-lg bg-primary/20 flex items-center justify-center">
               <div className="w-3 h-3 rounded-full bg-primary" />
             </div>
-            <span className="text-sm font-semibold tracking-tight">Glow Editor</span>
+            <span className="text-sm font-semibold tracking-tight">Canvas Studio</span>
           </div>
           <div className="flex items-center gap-3">
             <a href="https://github.com" target="_blank" rel="noopener noreferrer" className="p-2 text-muted-foreground hover:text-foreground transition-colors">
@@ -69,7 +69,7 @@ export default function Landing() {
             transition={{ duration: 0.5 }}
           >
             <span className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-primary/10 border border-primary/20 text-primary text-xs font-medium mb-6">
-              <Sparkles className="w-3 h-3" /> Visual CSS glow generator
+              <Sparkles className="w-3 h-3" /> Generalized visual editor alpha
             </span>
           </motion.div>
 
@@ -79,9 +79,7 @@ export default function Landing() {
             transition={{ duration: 0.5, delay: 0.1 }}
             className="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight leading-[1.1] mt-4"
           >
-            Design stunning{" "}
-            <span className="text-primary">glow effects</span>{" "}
-            visually
+            Design premium <span className="text-primary">canvas scenes</span> visually
           </motion.h1>
 
           <motion.p
@@ -90,8 +88,8 @@ export default function Landing() {
             transition={{ duration: 0.5, delay: 0.2 }}
             className="mt-6 text-base sm:text-lg text-muted-foreground max-w-xl mx-auto leading-relaxed"
           >
-            A multi-layer glow editor with real-time preview, smart color palettes,
-            built-in templates, and one-click export to CSS, Tailwind, or React.
+            Canvas Studio evolves the original glow editor into a generalized visual editor with live preview,
+            polished demo templates, and one-click export to CSS, Tailwind, or React.
           </motion.p>
 
           <motion.div
@@ -130,7 +128,7 @@ export default function Landing() {
             className="text-center mb-12"
           >
             <h2 className="text-2xl sm:text-3xl font-bold tracking-tight">Everything you need</h2>
-            <p className="mt-3 text-muted-foreground text-sm sm:text-base">Powerful features for creating production-ready glow effects.</p>
+            <p className="mt-3 text-muted-foreground text-sm sm:text-base">Powerful features for building production-ready visual compositions.</p>
           </motion.div>
 
           <motion.div
@@ -169,7 +167,7 @@ export default function Landing() {
           <div className="glass-surface rounded-3xl p-8 sm:p-12 relative overflow-hidden">
             <div className="absolute inset-0 bg-primary/3 pointer-events-none" />
             <h2 className="text-2xl sm:text-3xl font-bold tracking-tight relative">Ready to create?</h2>
-            <p className="mt-3 text-muted-foreground text-sm relative">Start designing your glow effect in seconds. No account needed.</p>
+            <p className="mt-3 text-muted-foreground text-sm relative">Start composing your next demo-ready canvas in seconds. No account needed.</p>
             <motion.button
               whileHover={{ scale: 1.04 }}
               whileTap={{ scale: 0.96 }}
@@ -189,7 +187,7 @@ export default function Landing() {
             <div className="w-5 h-5 rounded bg-primary/20 flex items-center justify-center">
               <div className="w-2 h-2 rounded-full bg-primary" />
             </div>
-            <span>Glow Editor</span>
+            <span>Canvas Studio</span>
           </div>
           <span>Built with Lovable</span>
         </div>

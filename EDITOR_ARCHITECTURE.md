@@ -1,5 +1,12 @@
 # EDITOR ARCHITECTURE
 
+## Alpha status update
+- The production editor route now uses the three-panel `Editor.tsx` shell.
+- The store owns editor document data, viewport controls, inspector tabs, export modal state, command palette state, and demo document selection.
+- Legacy glow rendering is kept alive through `src/editor/adapters/glow-compat.ts` to minimize migration risk.
+- The inspector is schema-driven for `effect-layer` nodes via `src/editor/core/property-schema.ts` and `src/editor/inspector/*`.
+- Export flow is now `EditorDocument -> Intermediate Representation -> formatter`.
+
 ## State Model (Zustand)
 
 ```
