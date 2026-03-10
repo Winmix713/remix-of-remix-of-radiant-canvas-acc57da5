@@ -151,10 +151,16 @@ export default function Index() {
 
         {/* Right Sidebar */}
         <RightSidebar
-          state={currentState}
-          onStateChange={handleStateChange}
+          glowState={currentState}
+          activeTab="style"
+          onActiveTabChange={() => {}}
+          onNodePropertyChange={() => {}}
           cssOverride={cssOverride}
-          setCssOverride={setCssOverride}
+          onCssOverrideChange={setCssOverride}
+          onGlobalScaleChange={(v) => handleStateChange({ ...currentState, globalScale: v })}
+          onGlobalOpacityChange={(v) => handleStateChange({ ...currentState, globalOpacity: v })}
+          onNoiseToggle={(v) => handleStateChange({ ...currentState, noiseEnabled: v })}
+          onNoiseIntensityChange={(v) => handleStateChange({ ...currentState, noiseIntensity: v })}
         />
       </div>
 

@@ -6,7 +6,7 @@
 import React from "react";
 import { cn } from "@/lib/utils";
 
-interface NumberInputProps extends React.InputHTMLAttributes<HTMLInputElement> {
+interface NumberInputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, 'onChange' | 'value'> {
   value: number;
   onChange: (value: number) => void;
   min?: number;
