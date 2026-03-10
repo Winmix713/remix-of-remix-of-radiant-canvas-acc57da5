@@ -127,7 +127,7 @@ export function CanvasShell({
     const glowState = documentToGlowState(document, selectedNodeId);
     const svg = exportAsSVG(glowState, viewport.frameWidth, viewport.frameHeight);
     const blob = new Blob([svg], { type: "image/svg+xml" });
-    const link = document.createElement("a");
+    const link = window.document.createElement("a");
     link.href = URL.createObjectURL(blob);
     link.download = `canvas-studio-${Date.now()}.svg`;
     link.click();

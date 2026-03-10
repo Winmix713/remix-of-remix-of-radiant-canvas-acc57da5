@@ -50,7 +50,7 @@ export function buildActionRegistry({ glowState, onUndo, onRedo, onExport, onTog
       id: `focus-${layer.id}`,
       label: `Focus ${layer.name}`,
       category: "layer" as const,
-      description: `${layer.color} • ${layer.visible ? "visible" : "hidden"}`,
+      description: `${layer.color} • ${layer.active ? "visible" : "hidden"}`,
       run: () => {},
     })),
   ];

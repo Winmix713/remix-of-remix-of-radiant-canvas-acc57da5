@@ -169,7 +169,7 @@ export default function Editor() {
           />
         )}
         {store.ui.showABSplit && (
-          <ABSplitView state={glowState} onClose={() => store.setShowABSplit(false)} />
+          <ABSplitView currentState={glowState} onClose={() => store.setShowABSplit(false)} />
         )}
       </AnimatePresence>
 
