@@ -116,7 +116,7 @@ export function CanvasShell({
   const exportPng = async () => {
     if (!previewRef.current) return;
     const dataUrl = await toPng(previewRef.current, { cacheBust: true, pixelRatio: 2 });
-    const link = document.createElement("a");
+    const link = window.document.createElement("a");
     link.href = dataUrl;
     link.download = `canvas-studio-${Date.now()}.png`;
     link.click();
